@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.lm.springboot_mybatis_oracle_cassandra.mapper.UpsCalendarMapper">
+	<resultMap id="BaseResultMap" type="com.lm.springboot_mybatis_oracle_cassandra.entity.UpsCalendarEntity">
+		<id property="id" column="ID" jdbcType="VARCHAR" />
+		<result property="name" column="NAME" jdbcType="VARCHAR" />
+		<result property="description" column="DESCRIPTION" jdbcType="VARCHAR" />
+		<result property="org_id" column="ORG_ID" jdbcType="DECIMAL" />
+		<result property="is_active" column="IS_ACTIVE" jdbcType="VARCHAR" />
+		<result property="created" column="CREATED" jdbcType="TIMESTAMP" />
+		<result property="createdby" column="CREATEDBY" jdbcType="VARCHAR" />
+		<result property="updated" column="UPDATED" jdbcType="TIMESTAMP" />
+		<result property="updatedby" column="UPDATEDBY" jdbcType="VARCHAR" />
+	</resultMap>
+	<sql id="Base_Column_List">
+		ID, NAME, DESCRIPTION, ORG_ID, IS_ACTIVE, CREATED, CREATEDBY, UPDATED,
+		UPDATEDBY
+	</sql>
+	<select id="getAll" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from UPS_CALENDAR_TEST
+	</select>
+	<delete id="delete">
+		delete from UPS_CALENDAR_TEST
+	</delete>
+	<insert id="batchInsert" parameterType="java.util.List">
+		INSERT INTO
+		UPS_CALENDAR_TEST (ID, NAME, DESCRIPTION,
+		ORG_ID, IS_ACTIVE,
+		CREATED, CREATEDBY, UPDATED,
+		UPDATEDBY)
+		SELECT * FROM (
+		<foreach collection="list" item="item" index="index"
+			separator="union all">
+			SELECT #{item.id,jdbcType=VARCHAR},
+			#{item.name,jdbcType=VARCHAR}, #{item.description,jdbcType=VARCHAR},
+			#{item.org_id,jdbcType=DECIMAL}, #{item.is_active,jdbcType=VARCHAR},
+			#{item.created,jdbcType=TIMESTAMP},
+			#{item.createdby,jdbcType=VARCHAR},
+			#{item.updated,jdbcType=TIMESTAMP},
+			#{item.updatedby,jdbcType=VARCHAR}
+			FROM
+			DUAL
+		</foreach>
+		) t
+	</insert>
+
+</mapper>
